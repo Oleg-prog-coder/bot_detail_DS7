@@ -10,7 +10,7 @@ const {
 } = require("@grammyjs/conversations");
 
 const { adminMenu, ADMINPASSWORD } = require("./admin");
-const { notifyUsers, isNotifying } = require("./services");
+const { notifyUsers} = require("./services");
 
 const bot = new Bot(process.env.BOT_API_KEY);
 bot.use(hydrate());
@@ -120,16 +120,6 @@ bot.callbackQuery("close", async (ctx) => {
   await ctx.deleteMessage();
 });
 
-bot.callbackQuery("cancel", async (ctx) => {
-  isNotifying = false
-  await ctx.answerCallbackQuery("Рассылка остановлена.");
-  if (!isNotifying) {
-    await ctx.reply("Рассылка была прекращена.");
-    await ctx.conversation.leave("notifyUsers"); // Завершаем conversation
-    return; // Выходим из функции, если рассылка остановлена
-  }
-  await ctx.deleteMessage();
-});
 
 bot.on(":photo", async (ctx) => {
   await ctx.reply(ctx.msg.photo[0]?.file_id, {

@@ -2,23 +2,17 @@ const { conversations } = require("@grammyjs/conversations");
 const { resolver } = require("@grammyjs/conversations/out/utils");
 const { getAllUsers } = require("./db");
 const { Bot } = require("grammy");
-const { cancelNotify } = require("./keyboards");
 
 delay = function delay(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 };
 
-let isNotifying = false
 
 const notifyUsers = async (conversation, ctx) => {
-  const question = await ctx.reply("Введите текст рассылки:", {
-    reply_markup: cancelNotify,
-  });
+  const question = await ctx.reply("Введите текст рассылки:");
 
   const messageCtx = await conversation.wait(); // ждем ответ
   await ctx.api.deleteMessage(question.chat.id, question.message_id);
-
-  isNotifying = true; // Устанавливаем флаг, чтобы начать рассылку
   await sendMessageToAllUsers(messageCtx, ctx);
 };
 
