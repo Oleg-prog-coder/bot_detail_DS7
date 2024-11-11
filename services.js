@@ -16,7 +16,7 @@ const notifyUsers = async (conversation, ctx) => {
   await sendMessageToAllUsers(messageCtx, ctx);
 };
 
-const sendMessageToAllUsers = async (messageCtx, ctx) => {
+const sendMessageToAllUsers = async (ctx) => {
   try {
     const allTgIds = await getAllUsers();
     if (!allTgIds || allTgIds.length === 0) {
@@ -57,4 +57,4 @@ const sendMessageToAllUsers = async (messageCtx, ctx) => {
     console.error("Ошибка при рассылке сообщений:", error);
   }
 };
-module.exports = { notifyUsers, isNotifying };
+module.exports = { notifyUsers };
