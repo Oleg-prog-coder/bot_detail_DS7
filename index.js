@@ -90,8 +90,9 @@ bot.callbackQuery("apply", async (ctx) => {
     }
 
     sessionOrdersData.savedOrders.push(orderText);
-    ctx.session.servicesDb = []; // Очищаем массив услуг
-
+    ctx.session.servicesDb = [];
+    // Очищаем массив услуг
+    
     // Проверка наличия username для добавления в сообщение
     if (ctx.from.username) {
       adminOrderText += `Профиль пользователя: @${ctx.from.username}`;
@@ -100,12 +101,13 @@ bot.callbackQuery("apply", async (ctx) => {
       const userLink = `tg://user?id=${userId}`; // Формируем ссылку
       adminOrderText += `Ссылка на пользователя: [Профиль пользователя](${userLink})`;
     }
-
+    
     // Отправка сообщения в целевой чат
     await bot.api.sendMessage(targetChatId, adminOrderText, {
       parse_mode: "Markdown",
     });
-
+    
+    ctx.session.savedOrders = [];
     await ctx.answerCallbackQuery("Заказ сохранён");
     await ctx.deleteMessage();
   } catch (error) {
