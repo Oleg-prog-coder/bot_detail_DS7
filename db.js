@@ -12,7 +12,6 @@ module.exports.createUser = async ({ tg_id }) => {
     });
     console.log(user);
   } catch (error) {
-    console.log(error);
   }
 };
 
@@ -25,7 +24,6 @@ module.exports.getAllUsers = async () => {
     });
     return allIds;
   } catch (error) {
-    console.log(error);
     return false;
   }
 };
@@ -47,7 +45,6 @@ module.exports.createPassword = async (label, value) => {
     });
     return true; // Пароль успешно сохранен
   } catch (error) {
-    console.error("Ошибка при создании пароля:", error);
     return false; // Ошибка при создании пароля
   }
 };
@@ -62,7 +59,6 @@ module.exports.getPassword = async (value) => {
     });
     return password;
   } catch (error) {
-    console.log(error);
     return false;
   }
 };
@@ -95,10 +91,8 @@ module.exports.createOrder = async ({ authorId, content }) => {
         content: content,
       },
     });
-    console.log('Order created:', order);
     return order; 
   } catch (error) {
-    console.error('Error creating order:', error);
   }
 };
 
@@ -118,7 +112,6 @@ module.exports.getUserOrders = async (tgId) => {
 
     return userWithOrders ? userWithOrders.orders : [];
   } catch (error) {
-    console.log(error);
     return false;
   }
 };

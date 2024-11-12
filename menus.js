@@ -4,30 +4,17 @@ const { InlineKeyboard, Bot } = require("grammy");
 const { hydrate } = require("@grammyjs/hydrate");
 const {
   everage,
-  preview,
   buisiness,
   cross,
   suv,
   car1,
-  car3,
   car,
-  car2,
   everage1,
-  everage2,
-  everage3,
   buisiness1,
-  buisiness2,
-  buisiness3,
   cross1,
-  cross2,
-  cross3,
   suv1,
-  suv2,
-  suv3,
   minivan,
   minivan1,
-  minivan2,
-  minivan3,
   minivanExample,
   suvExample,
   crossExample,
@@ -36,8 +23,6 @@ const {
   carExample,
 } = require("./photo");
 const {
-  backInlineKeyBoard,
-  manageOrderKeyBoard,
   closeOrderList,
 } = require("./keyboards");
 const { generateMenu } = require("./menus/generateMenu");
@@ -49,7 +34,6 @@ const { averageServMenu } = require("./menus/averageSernMenu");
 const { businessServMenu } = require("./menus/businessServMenu");
 const { getUserOrders } = require("./db");
 const bot = new Bot(process.env.BOT_API_KEY);
-const backToMenu = new InlineKeyboard().text("Вернуться назад", "Back");
 bot.use(hydrate());
 const mainmenu = new Menu("mainmenu")
   .text("Список услуг", async (ctx) => {
@@ -65,7 +49,7 @@ const mainmenu = new Menu("mainmenu")
     );
   })
   .row()
-  .url("Отызвы", (ctx) => "https://t.me/+RpDowZC6EzA1ODAy ")
+  .url("Отызвы", "https://t.me/+RpDowZC6EzA1ODAy ")
   .url("Мы на карте", "https://yandex.ru/maps/-/CDTbeZYe")
   .row()
   .text("Сделать заказ", async (ctx) => {

@@ -55,7 +55,7 @@ const generateMenu = (menuName, copyList) => {
           }\nОбщая сумма: ${totalPrice} ₽\n${servicesText.join(
             ""
           )}\n${additionalText}\n${addInfo}`;
-          
+
           await ctx.reply(text, {
             reply_markup: manageOrderKeyBoard,
           });
@@ -63,6 +63,9 @@ const generateMenu = (menuName, copyList) => {
             button.isActive = false;
           });
           ctx.menu.update();
+          try {
+            await ctx.msg.delete();
+          } catch (error) {}
         })
         .row();
     }

@@ -1,6 +1,5 @@
 const {Menu} = require  ("@grammyjs/menu");
-const { sendMessageToAllUsers } = require("./services");
-const { getPassword } = require("./db");
+
 
 const ADMINPASSWORD = "adminArtem"
 

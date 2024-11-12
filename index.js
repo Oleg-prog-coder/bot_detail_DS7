@@ -10,7 +10,7 @@ const {
 } = require("@grammyjs/conversations");
 
 const { adminMenu, ADMINPASSWORD } = require("./admin");
-const { notifyUsers} = require("./services");
+const { notifyUsers } = require("./services");
 
 const bot = new Bot(process.env.BOT_API_KEY);
 bot.use(hydrate());
@@ -18,7 +18,7 @@ bot.use(
   session({
     initial: () => ({
       savedOrders: [],
-      serviceDb: [],
+      servicesDb: [],
     }),
   })
 );
@@ -27,7 +27,9 @@ bot.use(createConversation(notifyUsers));
 bot.use(mainmenu);
 bot.use(adminMenu);
 bot.command("start", async (ctx) => {
-  await ctx.deleteMessage();
+  try {
+    await ctx.msg.delete();
+  } catch (error) {}
   await createUser({ tg_id: ctx.from.id });
   await ctx.replyWithPhoto(
     "AgACAgIAAxkBAAIGHGclGW8VWfAYsZlf2v4Di9U7UOoYAAK56jEbFZooSV2UeC1itUDLAQADAgADcwADNgQ",
@@ -39,7 +41,7 @@ bot.command("start", async (ctx) => {
   );
 });
 
-bot.on('message:text', async (ctx) => {
+bot.on("message:text", async (ctx) => {
   if (ctx.msg.text === ADMINPASSWORD) {
     await ctx.deleteMessage();
     await ctx.reply("Пароль верный! Добро пожаловать в кабинет владельца!", {
@@ -60,7 +62,17 @@ bot.callbackQuery("back", async (ctx) => {
 });
 
 bot.callbackQuery("delete", async (ctx) => {
-  await ctx.deleteMessage();
+  await ctx.replyWithPhoto(
+    "AgACAgIAAxkBAAIGHGclGW8VWfAYsZlf2v4Di9U7UOoYAAK56jEbFZooSV2UeC1itUDLAQADAgADcwADNgQ",
+    {
+      caption:
+        "Мы рады представить вашему вниманию, наш новый большой проект - DS7!Это не автомойка, в привычном понимании. Это сервис совершенно нового формата, для Вас и вашего автомобиля.",
+      reply_markup: mainmenu,
+    }
+  );
+  try {
+    await ctx.deleteMessage();
+  } catch (error) {}
 });
 bot.callbackQuery("apply", async (ctx) => {
   try {
@@ -90,9 +102,7 @@ bot.callbackQuery("apply", async (ctx) => {
     }
 
     sessionOrdersData.savedOrders.push(orderText);
-    ctx.session.servicesDb = [];
-    // Очищаем массив услуг
-    
+
     // Проверка наличия username для добавления в сообщение
     if (ctx.from.username) {
       adminOrderText += `Профиль пользователя: @${ctx.from.username}`;
@@ -101,15 +111,27 @@ bot.callbackQuery("apply", async (ctx) => {
       const userLink = `tg://user?id=${userId}`; // Формируем ссылку
       adminOrderText += `Ссылка на пользователя: [Профиль пользователя](${userLink})`;
     }
-    
+
     // Отправка сообщения в целевой чат
     await bot.api.sendMessage(targetChatId, adminOrderText, {
       parse_mode: "Markdown",
     });
-    
+
+    // Очищаем массив услуг
+    ctx.session.servicesDb = [];
     ctx.session.savedOrders = [];
     await ctx.answerCallbackQuery("Заказ сохранён");
-    await ctx.deleteMessage();
+    try {
+      await ctx.deleteMessage();
+    } catch (error) {}
+    await ctx.replyWithPhoto(
+      "AgACAgIAAxkBAAIGHGclGW8VWfAYsZlf2v4Di9U7UOoYAAK56jEbFZooSV2UeC1itUDLAQADAgADcwADNgQ",
+      {
+        caption:
+          "Мы рады представить вашему вниманию, наш новый большой проект - DS7!Это не автомойка, в привычном понимании. Это сервис совершенно нового формата, для Вас и вашего автомобиля.",
+        reply_markup: mainmenu,
+      }
+    );
   } catch (error) {
     console.error("Ошибка в обработчике колбэков:", error);
     await ctx.answerCallbackQuery("Произошла ошибка. Попробуйте снова."); // Уведомление об ошибке
@@ -120,7 +142,6 @@ bot.callbackQuery("close", async (ctx) => {
   await ctx.deleteMessage();
 });
 
-
 bot.on(":photo", async (ctx) => {
   await ctx.reply(ctx.msg.photo[0]?.file_id, {
     reply_parameters: { message_id: ctx.msg.message_id },
@@ -130,6 +151,10 @@ bot.on(":document", async (ctx) => {
   await ctx.reply(ctx.msg.document?.file_id, {
     reply_parameters: { message_id: ctx.msg.message_id },
   });
+});
+
+bot.catch((error) => {
+  console.log(error.message);
 });
 
 bot.start();
